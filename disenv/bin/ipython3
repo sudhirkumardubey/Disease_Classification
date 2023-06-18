@@ -1,0 +1,8 @@
+#!/home/sudhir/SUDHIR/ROSTOCK_COURSE_WORK/SEMESTER_3/ML_100/Disease_Classification/Disease_Classification/disenv/bin/python
+# -*- coding: utf-8 -*-
+import re
+import sys
+from IPython import start_ipython
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(start_ipython())
