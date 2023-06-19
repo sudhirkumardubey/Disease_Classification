@@ -1,8 +1,8 @@
 import os
 from box.exceptions import BoxValueError
 import yaml
-import json
 from CNN_Classifier import logger
+import json
 import joblib
 from ensure import ensure_annotations
 from box import ConfigBox
@@ -12,8 +12,8 @@ import base64
 
 
 
-@ensure_annotations # ensure_annotations decorators makes sure that if data passed does not match the function parameter it throws error
-def read_yaml(path_to_yaml: Path) -> ConfigBox: # with ConfigBox dict type DS can be accessed like d.key etc manner
+@ensure_annotations
+def read_yaml(path_to_yaml: Path) -> ConfigBox:
     """reads yaml file and returns
 
     Args:
@@ -27,14 +27,17 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox: # with ConfigBox dict type DS ca
         ConfigBox: ConfigBox type
     """
     try:
-        with open(path_to_yaml) as yaml_file:
+        with open(path_to_yaml, 'r') as yaml_file:
             content = yaml.safe_load(yaml_file)
             logger.info(f"yaml file: {path_to_yaml} loaded successfully")
+        
             return ConfigBox(content)
+        
     except BoxValueError:
         raise ValueError("yaml file is empty")
-    except Exception as e:
-        raise e
+    
+    # except Exception as e:
+    #     raise e
     
 
 
