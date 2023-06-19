@@ -1,0 +1,117 @@
+schema: '2.0'
+stages:
+  prepare_base_model:
+    cmd: python3 src/CNN_Classifier/pipeline/stage_02_prepare_base_model.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 74184fe112a8f8feb0f20ace4848123e
+      size: 792
+    - path: src/CNN_Classifier/pipeline/stage_02_prepare_base_model.py
+      hash: md5
+      md5: dd3b2ccf1e6bf766c801d7b0a2b64dd3
+      size: 1000
+    params:
+      params.yaml:
+        CLASSES: 2
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        INCLUDE_TOP: false
+        LEARNING_RATE: 0.01
+        WEIGHTS: imagenet
+    outs:
+    - path: artifacts/prepare_base_model
+      hash: md5
+      md5: d0270c49fa2757d1a8063ef6fc77d482.dir
+      size: 118054560
+      nfiles: 2
+  data_ingestion:
+    cmd: python3 src/CNN_Classifier/pipeline/stage_01_data_ingestion.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 74184fe112a8f8feb0f20ace4848123e
+      size: 792
+    - path: src/CNN_Classifier/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: 9bdc60c2cacfe5b54c164c80a66094f9
+      size: 1119
+    outs:
+    - path: artifacts/data_ingestion/Chicken-fecal-images
+      hash: md5
+      md5: 9e1f8dd2eae3c29e9d635df89d438ae4.dir
+      size: 12207807
+      nfiles: 390
+  training:
+    cmd: python3 src/CNN_Classifier/pipeline/stage_03_training.py
+    deps:
+    - path: artifacts/data_ingestion/Chicken-fecal-images
+      hash: md5
+      md5: 9e1f8dd2eae3c29e9d635df89d438ae4.dir
+      size: 12207807
+      nfiles: 390
+    - path: artifacts/prepare_base_model
+      hash: md5
+      md5: d0270c49fa2757d1a8063ef6fc77d482.dir
+      size: 118054560
+      nfiles: 2
+    - path: config/config.yaml
+      hash: md5
+      md5: 74184fe112a8f8feb0f20ace4848123e
+      size: 792
+    - path: src/CNN_Classifier/components/prepare_callbacks.py
+      hash: md5
+      md5: 19cdaaa2c594d9af5453295d9ed528b4
+      size: 970
+    - path: src/CNN_Classifier/pipeline/stage_03_training.py
+      hash: md5
+      md5: c45b3ae1c312befbf9e309d31aca30d9
+      size: 1242
+    params:
+      params.yaml:
+        AUGMENTATION: true
+        BATCH_SIZE: 16
+        EPOCHS: 1
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: artifacts/training/model.h5
+      hash: md5
+      md5: ce81773006a4758f18685ab617e73c5b
+      size: 59337520
+  evaluation:
+    cmd: python3 src/CNN_Classifier/pipeline/stage_04_evaluation.py
+    deps:
+    - path: artifacts/data_ingestion/Chicken-fecal-images
+      hash: md5
+      md5: 9e1f8dd2eae3c29e9d635df89d438ae4.dir
+      size: 12207807
+      nfiles: 390
+    - path: artifacts/training/model.h5
+      hash: md5
+      md5: ce81773006a4758f18685ab617e73c5b
+      size: 59337520
+    - path: config/config.yaml
+      hash: md5
+      md5: 74184fe112a8f8feb0f20ace4848123e
+      size: 792
+    - path: src/CNN_Classifier/pipeline/stage_04_evaluation.py
+      hash: md5
+      md5: 48c9545d80a172aeb854866e791fc60f
+      size: 844
+    params:
+      params.yaml:
+        BATCH_SIZE: 16
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: scores.json
+      hash: md5
+      md5: c98c893c3fe1524d6beee22d7697916a
+      size: 55
